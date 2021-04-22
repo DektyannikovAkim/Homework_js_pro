@@ -7,9 +7,9 @@ const goods = [
     { title: 'Shoes', price: 250 },
 ];
 
-const renderGoodsItem = (title = "товар отсутствует", price = "цена еще не известна") => {
-    return `<figure class="goods-item"><img src="#" alt="#"><figcaption class="item-info"><h3>${title}</h3><span>${price}</span></figcaption></figure>`;
-};
+const renderGoodsItem = (title = "товар отсутствует", price = "цена еще не известна") =>
+    `<figure class="goods-item"><img src="#" alt="#"><figcaption class="item-info">
+    <h3>${title}</h3><span>${price}</span></figcaption></figure>`;
 
 const renderGoodsList = (list) => {
     let goodsList = document.querySelector('.goods-list');

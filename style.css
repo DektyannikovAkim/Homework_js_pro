@@ -23,13 +23,19 @@ button {
     display: flex;
     justify-content: space-between;
     padding: 20px 0px;
+    align-items: center;
 }
 
 .logo {
     text-decoration: none;
-    font-size: 27px;
+    font-size: 45px;
     font-weight: 300;
     color: #222222;
+}
+
+.red {
+    font-weight: 600;
+    color: #f16d7f;
 }
 
 .cart-button {
@@ -43,9 +49,7 @@ button {
 .goods-list {
     display: grid;
     grid-template-columns: repeat(auto-fit, 200px);
-    grid-column-gap: 30px;
-    grid-row-gap: 38px;
-    justify-content: center;
+    justify-content: space-between;
     margin-top: 30px;
 }
 
