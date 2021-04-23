@@ -1,19 +1,26 @@
 'use strict'
 
-const goods = [
-    { title: 'Shirt', price: 150 },
-    { title: 'Socks', price: 50 },
-    { title: 'Jacket', price: 350 },
-    { title: 'Shoes', price: 250 },
+const getRandomNumber = () => Math.round(Math.random() * (100 - 1) + 1);
+
+const products = [
+    { title: 'Shirt', price: 150, img: `https://picsum.photos/seed/${getRandomNumber()}/260/280` },
+    { title: 'Socks', price: 50, img: `https://picsum.photos/seed/${getRandomNumber()}/260/280` },
+    { title: 'Jacket', price: 350, img: `https://picsum.photos/seed/${getRandomNumber()}/260/280` },
+    { title: 'Shoes', price: 250, img: `https://picsum.photos/seed/${getRandomNumber()}/260/280` },
 ];
 
-const renderGoodsItem = (title = "товар отсутствует", price = "цена еще не известна") =>
-    `<figure class="goods-item"><img src="#" alt="#"><figcaption class="item-info">
-    <h3>${title}</h3><span>${price}</span></figcaption></figure>`;
+const renderProductItem = (product) =>
+    `<figure class="products-item">
+    <img src="${product.img}" alt="Фото товара">
+    <figcaption class="item-info">
+    <h3>${product.title}</h3>
+    <span class="red">${product.price}$</span>
+    <button class="product-buy" type="button">Купить</button>
+    </figcaption></figure>`;
 
-const renderGoodsList = (list) => {
-    let goodsList = document.querySelector('.goods-list');
-    goodsList.innerHTML = list.map(item => renderGoodsItem(item.title, item.price)).join('');
+const renderProductList = (list) => {
+    let productsList = document.querySelector('.products-list');
+    productsList.innerHTML = list.map(productItem => renderProductItem(productItem)).join('');
 }
 
-renderGoodsList(goods);
+renderProductList(products);
