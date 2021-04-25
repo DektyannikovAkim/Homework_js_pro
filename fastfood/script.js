@@ -10,41 +10,40 @@ const menu = {
     smallMac: { calories: 20, price: 50 }
 }
 
-class Order {
-    constructor(items) {
-        this.items = items;
+class OrderItem {
+    constructor(item, aditionals) {
+        this.item = item;
+        this.aditionals = aditionals;
     }
 
-    addItem(item) {
-        this.items.push(item)
+    addAditional(aditional) {
+        this.aditionals.push(aditional)
     }
 
-    removeItem(item) {
-        this.items.splice(this.items.indexOf(item), 1);
+    removeAditional(aditional) {
+        this.aditionals.splice(this.aditionals.indexOf(aditional), 1);
     }
 
     calculatePrice() {
-        let totalPrice = 0;
-        this.items.forEach(item => {
-            totalPrice += menu[item].price
+        let totalPrice = menu[this.item].price;
+        this.aditionals.forEach(aditional => {
+            totalPrice += menu[aditional].price
         })
         return totalPrice;
-        //или одной строкой через reduce (не очень люблю эту функцию, не очень легко читается)
-        //this.items.reduce((price, item) => price + menu[item].price, 0)
     }
 
     calculateCalories() {
-        let totalCalorie = 0;
-        this.items.forEach(item => {
-            totalCalorie += menu[item].calories
+        let totalCalorie = menu[this.item].calories;
+        this.aditionals.forEach(aditional => {
+            totalCalorie += menu[aditional].calories
         })
 
         return totalCalorie;
     }
 }
 
-const bigMack = new Order(['smallMac', 'cheese']);
-bigMack.addItem('mayonnaise');
-bigMack.removeItem('mayonnaise');
+const bigMack = new OrderItem('smallMac', ['cheese']);
+bigMack.addAditional('mayonnaise');
+bigMack.removeAditional('mayonnaise');
 console.log(bigMack.calculatePrice());
 console.log(bigMack.calculateCalories());
