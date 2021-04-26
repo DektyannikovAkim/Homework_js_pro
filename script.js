@@ -1,5 +1,13 @@
 'use strict'
 
+window.onload = function() {
+    document.body.classList.add('loaded_hiding');
+    window.setTimeout(function() {
+        document.body.classList.add('loaded');
+        document.body.classList.remove('loaded_hiding');
+    }, 500);
+}
+
 const getRandomNumber = () => Math.round(Math.random() * (100 - 1) + 1);
 
 class ProductsList {
