@@ -170,17 +170,14 @@ class CartList {
         cartList.addEventListener('click', (event) => {
 
             let btn = event.path[0];
+            let input = btn.parentNode.querySelector('.number-of-goods');
 
             if (btn.classList[1] === "remove-product") {
-
-                let input = btn.nextElementSibling;
 
                 this.removeProducts(btn.dataset.id, input);
                 this.showMessage(cartList);
 
             } else if (btn.classList[1] === "add-product") {
-
-                let input = btn.previousElementSibling;
 
                 this.addProducts(btn.dataset.id, input);
             }
