@@ -7,8 +7,11 @@ class ProductsList {
         this.products = [];
         this._getProducts()
             .then(data => {
-                this.products = [...data];
-                this.render()
+                this.products = data;
+                // this.applyDiscount(['Ноутбук', 'Мышка'], 10);
+                this.render();
+                this.addItemToCart();
+                // console.log(this.sumOfProducts());
             });
     }
 
@@ -17,6 +20,7 @@ class ProductsList {
             .then(result => result.json()
                 .catch(error => {
                     console.log(error);
+                    return data === undefined;
                 })
             )
     }
@@ -25,10 +29,10 @@ class ProductsList {
         let productsList = document.querySelector('.products-list');
 
         this.products.forEach(product => {
-            const productItem = new ProductItem(product.id_product, product.product_name, product.price, product.img);
+            const productItem = new ProductItem(product);
             productsList.insertAdjacentHTML('beforeend', productItem.render());
         });
-        this.addItemToCart(productsList);
+
     }
 
     sumOfProducts() {
@@ -43,59 +47,59 @@ class ProductsList {
     applyDiscount(arrayTitle, discnt) {
         arrayTitle.forEach(title => {
 
-            let priceProduct = this.products.find(product => product.title === title).price;
+            let findProduct = this.products.find(product => product.product_name === title);
 
-            this.products.find(product => product.title === title).price = priceProduct - (priceProduct * (discnt / 100));
+            findProduct.price = findProduct.price - (findProduct.price * (discnt / 100));
         });
     }
 
     addItemToCart() {
-        let btnList = document.querySelectorAll('.product-buy');
-        let cartContentList = document.querySelector('.cart-content');
+        const productsCont = document.querySelector('.products-list');
 
-        btnList.forEach(btn => {
-            btn.addEventListener('click', () => {
-                let foundItem = this.products.find(product => product.id_product === +btn.id);
-                let cartItemList = document.querySelectorAll(".cart-item");
-                let cartFoundItem = cartList.products.find(cartItem => cartItem.id_product === +btn.id);
+        productsCont.addEventListener('click', (event) => {
+            let btn = event.path[0];
+
+            if (btn.classList[0] === 'product-buy') {
+
+                let foundItem = this.products.find(product => product.id_product === +btn.dataset.id);
+                let cartItemList = document.querySelectorAll('.cart-item');
+                let cartFoundItem = cartList.products.find(cartItem => cartItem.id_product === +btn.dataset.id);
 
                 if (cartItemList.length !== 0 && cartFoundItem) {
 
                     cartItemList.forEach(cartItem => {
-                        if (cartItem.id === btn.id) {
+                        if (cartItem.dataset.id === btn.dataset.id) {
 
-                            let inputList = document.querySelectorAll('.number-of-goods');
-                            let productFinde = cartList.products.find(product => product.id_product === +btn.id);
+                            let productFinde = cartList.products.find(product => product.id_product === +btn.dataset.id);
+                            let input = cartItem.querySelector('.number-of-goods');
 
                             productFinde.quantity += 1;
-                            for (let elem of inputList) {
-                                if (elem.id === btn.id) {
-                                    elem.value = productFinde.quantity;
-                                }
-                            }
+                            input.value = productFinde.quantity;
                         }
                     })
                 } else {
-                    let figureList = document.querySelectorAll('.cart-item');
-                    for (let figure of figureList) {
-                        figure.parentNode.removeChild(figure);;
+
+                    for (let cartItem of cartItemList) {
+                        cartItem.remove();
                     }
-                    const cartItem = new CartItem(foundItem.id_product, foundItem.product_name, foundItem.price, foundItem.img, foundItem.quantity = 1);
-                    cartList.products.push(cartItem);
+
+                    if (!foundItem.quantity) {
+                        foundItem.quantity = 1;
+                    }
+
+                    cartList.products.push(foundItem);
                     cartList.render();
                 }
-
-            })
+            }
         })
     }
 }
-
 class ProductItem {
-    constructor(id, title, price, img) {
-        this.id = id;
-        this.title = title;
-        this.price = price;
-        this.img = img;
+    constructor(product) {
+        this.id = product.id_product;
+        this.title = product.product_name;
+        this.price = product.price;
+        this.img = product.img;
     }
     render() {
         let { id, title, price, img = "img/product-1.png" } = this;
@@ -105,12 +109,12 @@ class ProductItem {
     <figcaption class="item-info">
     <h3>${title}</h3>
     <span class="red">${price} &#8381</span>
-    <button class="product-buy" type="button" id='${id}'>Купить</button>
+    <button class="product-buy" type="button" data-id='${id}'>Купить</button>
     </figcaption></figure>`
     }
 }
 
-const list = new ProductsList;
+const list = new ProductsList();
 list.render();
 
 class CartList {
@@ -118,8 +122,9 @@ class CartList {
         this.products = [];
         this._getProducts()
             .then(data => {
-                this.products = [...data.contents];
-                this.render()
+                this.products = data.contents;
+                this.render();
+                this.addProduct();
             });
     }
     _getProducts() {
@@ -127,54 +132,21 @@ class CartList {
             .then(result => result.json()
                 .catch(error => {
                     console.log(error);
+                    return data === undefined;
                 })
             )
     }
 
-    removeProducts(idBtn, inptList, figureList) {
-
-        let productFinde = this.products.find(product => product.id_product === +idBtn);
-
-        if (productFinde.quantity !== 1) {
-            productFinde.quantity -= 1;
-            for (let elem of inptList) {
-                if (elem.id === idBtn) {
-                    elem.value = productFinde.quantity;
-                }
-            }
-        } else {
-            this.products.splice(this.products.indexOf(productFinde), 1);
-            for (let figure of figureList) {
-                if (figure.id === idBtn) {
-                    figure.parentNode.removeChild(figure);;
-                }
-            }
-        }
-    }
-
-    addProducts(idBtn, inptList) {
-
-        let productFinde = this.products.find(product => product.id_product === +idBtn);
-
-        productFinde.quantity += 1
-        for (let elem of inptList) {
-            if (elem.id === idBtn) {
-                elem.value = productFinde.quantity;
-            }
-        }
-    }
-
     render() {
 
-        let cartList = document.querySelector('.cart-content');
+        let cartCont = document.querySelector('.cart-content');
 
         this.products.forEach(product => {
-            const cartItem = new CartItem(product.id_product, product.product_name, product.price, product.img, product.quantity);
-            cartList.insertAdjacentHTML('beforeend', cartItem.render());
+            const cartItem = new CartItem(product);
+            cartCont.insertAdjacentHTML('beforeend', cartItem.render());
         });
 
-        this.showMessage(cartList);
-        this.addProduct(cartList);
+        this.showMessage(cartCont);
 
     }
 
@@ -182,41 +154,85 @@ class CartList {
         let cartText = document.querySelector('.no-product-in-cart');
 
         if (document.querySelector('.cart-item') && cartText) {
+
             cartList.removeChild(cartText);
+
         } else if (!document.querySelector('.cart-item') && !cartText) {
             cartList.insertAdjacentHTML('beforeend', '<span class="no-product-in-cart">У Вас пока что нет товаров в корзине</span>');
         }
     }
 
-    addProduct(cartList) {
-        let buttonCartList = document.querySelectorAll('.count-buttons__button');
-        let inputList = document.querySelectorAll('.number-of-goods');
-        let figureList = document.querySelectorAll('.cart-item');
+    addProduct() {
 
-        buttonCartList.forEach(btn => {
-            btn.addEventListener('click', () => {
-                if (btn.classList[1] === "remove-product") {
-                    this.removeProducts(btn.id, inputList, figureList);
-                    this.showMessage(cartList);
-                } else if (btn.classList[1] === "add-product") {
-                    this.addProducts(btn.id, inputList);
-                }
-            })
+
+        let cartList = document.querySelector('.cart-content');
+
+        cartList.addEventListener('click', (event) => {
+
+            let btn = event.path[0];
+
+            if (btn.classList[1] === "remove-product") {
+
+                let input = btn.nextElementSibling;
+
+                this.removeProducts(btn.dataset.id, input);
+                this.showMessage(cartList);
+
+            } else if (btn.classList[1] === "add-product") {
+
+                let input = btn.previousElementSibling;
+
+                this.addProducts(btn.dataset.id, input);
+            }
         })
+    }
+
+    removeProducts(idBtn, input) {
+
+        let figureList = document.querySelectorAll('.cart-item');
+        let productFinde = this.products.find(product => product.id_product === +idBtn);
+
+        if (productFinde.quantity !== 1) {
+
+            productFinde.quantity -= 1;
+
+            input.value = productFinde.quantity;
+
+        } else {
+
+            this.products.splice(this.products.indexOf(productFinde), 1);
+
+
+            for (let figure of figureList) {
+                if (figure.dataset.id === idBtn) {
+                    figure.remove();
+                }
+            }
+        }
+    }
+
+    addProducts(idBtn, input) {
+
+        let productFinde = this.products.find(product => product.id_product === +idBtn);
+
+        productFinde.quantity += 1;
+
+        input.value = productFinde.quantity;
+
     }
 }
 
 class CartItem {
-    constructor(id, title, price, img, quantity) {
-        this.id_product = id;
-        this.product_name = title;
-        this.price = price;
-        this.img = img;
-        this.quantity = quantity;
+    constructor(product) {
+        this.id_product = product.id_product;
+        this.product_name = product.product_name;
+        this.price = product.price;
+        this.img = product.img;
+        this.quantity = product.quantity;
     }
     render() {
-        let { id_product, product_name, price, img = "img/product-1.png", quantity = 1 } = this;
-        return `<figure class="cart-item" id="${id_product}">
+        let { id_product, product_name, price, img = "img/product-1.png", quantity } = this;
+        return `<figure class="cart-item" data-id="${id_product}">
         <img src="${img}" alt="Фото товара">
         <figcaption class="cart-item-info">
             <div class="wrapper-for-info">
@@ -224,16 +240,16 @@ class CartItem {
                 <span class="red">${price} &#8381</span>
             </div>
             <div class="wrapper-for-count-buttons">
-                <button class="count-buttons__button remove-product" id="${id_product}"></button>
-                <input class="number-of-goods" type="text" value="${quantity}" id="${id_product}" readonly>
-                <button class="count-buttons__button add-product" id="${id_product}"></button>
+                <button class="count-buttons__button remove-product" data-id="${id_product}"></button>
+                <input class="number-of-goods" type="text" value="${quantity}" data-id="${id_product}" readonly>
+                <button class="count-buttons__button add-product" data-id="${id_product}"></button>
             </div>
         </figcaption>
     </figure>`
     }
 }
 
-const cartList = new CartList;
+const cartList = new CartList();
 cartList.render();
 
 // запуск лоадера

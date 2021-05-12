@@ -5,7 +5,7 @@
 function loader() {
     document.body.classList.add('loaded_hiding');
     window.setTimeout(function() {
-        document.body.classList.add('loaded');
+        document.querySelector('.preloader').style.display = "none";
         document.body.classList.remove('loaded_hiding');
     }, 500);
 }
@@ -23,8 +23,10 @@ modalclose.addEventListener('click', () => {
     cart.style.display = "none";
 })
 
-window.onclick = (event) => {
-    if (event.target == cart) {
-        cart.style.display = "none";
-    }
-}
+// Если нужно чтобы модалка закрывалась по клику вне окна
+
+// window.onclick = (event) => {
+//     if (event.target == cart) {
+//         cart.style.display = "none";
+//     }
+// }
