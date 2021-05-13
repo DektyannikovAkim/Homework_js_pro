@@ -158,19 +158,19 @@ class CartList {
 
     addProduct(id) {
         let input = document.querySelector(`.cart-item[data-id="${id}"] input.number-of-goods`);
-        let productFinde = this.products.find(product => product.id_product == id);
+        let product = this.products.find(product => product.id_product == id);
 
-        input.value = productFinde.quantity += 1;
+        input.value = product.quantity += 1;
     }
 
     addProductFromList(product) {
-        let productInCart = this.products.find(p => p.id_product === product.id);
+        let productInCart = this.products.find(p => p.id_product === product.id_product);
         if (!productInCart) {
             productInCart = { ...product, quantity: 1 };
             this.products.push(productInCart);
             this.renderItem(productInCart);
         } else {
-            this.addProduct(productInCart.id);
+            this.addProduct(productInCart.id_product);
         }
     }
 }
