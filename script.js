@@ -89,8 +89,8 @@ class CartList {
             .then(data => {
                 this.products.push(...data.contents);
                 this.render(data.contents);
-                this.addProductHandlers();
             });
+        this.addProductHandlers();
     }
     _getProducts() {
         return fetch(`${API}/getBasket.json`)
