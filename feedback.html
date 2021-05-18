@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <title>eShop</title>
+    <title>feedback</title>
 
 </head>
 
@@ -14,22 +14,8 @@
 
     <header class="header-border">
         <div class="header-medium container">
-            <a href="#" class="logo"> <span><span class="red">e</span>Shop</span>
+            <a href="index.html" class="logo"> <span><span class="red">e</span>Shop</span>
             </a>
-            <div class="wrapper-for-shopping">
-                <form action="" class="search">
-                    <input type="text" class="search-text">
-                    <button class="search-button"></button>
-                </form>
-                <a href="feedback.html" class="form-feedback"></a>
-                <button id="opnCart" class="cart-button" type="button">Корзина</button>
-            </div>
-            <div id="modal" class="cart-list">
-                <div class="cart-content">
-                    <button class="close-cart-list"></button>
-                    <span class="no-product-in-cart" hidden>У Вас пока что нет товаров в корзине</span>
-                </div>
-            </div>
         </div>
 
     </header>
@@ -42,15 +28,25 @@
               </path>
             </svg>
         </div>
-        <div class="products-list"></div>
+        <form class="feedback">
+            <span class="field-name">Имя:</span>
+            <input class="name" type="text">
+            <span class="field-name">Номер телефона:</span>
+            <input class="numb" type="text">
+            <span class="field-name">E-mail:</span>
+            <input class="mail" type="text">
+            <span class="field-name">Текст обращения:</span>
+            <textarea class="appeal" name="" id="" cols="30" rows="10"></textarea>
+            <button class="send" type="submit">Send</button>
+        </form>
     </main>
 
     <footer class="footer">
         <span>&#169; Рога и Копыта</span>
     </footer>
 
-    <script src="script.js"></script>
     <script src="decorations.js"></script>
+
 </body>
 
 </html>
