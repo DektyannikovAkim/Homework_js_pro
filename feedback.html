@@ -21,13 +21,13 @@
     </header>
 
     <main class="container">
-        <!-- <div class="preloader">
+        <div class="preloader">
             <svg class="preloader__image" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
               <path fill="currentColor"
                 d="M304 48c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-48 368c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zm208-208c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zM96 256c0-26.51-21.49-48-48-48S0 229.49 0 256s21.49 48 48 48 48-21.49 48-48zm12.922 99.078c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.491-48-48-48zm294.156 0c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.49-48-48-48zM108.922 60.922c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.491-48-48-48z">
               </path>
             </svg>
-        </div> -->
+        </div>
         <form class="feedback">
             <span>Name:</span>
             <input class="name" type="text">
@@ -45,35 +45,8 @@
         <span>&#169; Рога и Копыта</span>
     </footer>
 
-    <!-- <script src="script.js"></script> -->
-    <!-- <script src="decorations.js"></script> -->
-    <script>
-        let form = document.querySelector('.feedback');
-        const regExpForName = /^[a-zа-я']+$/iu;
-        const regExpForNumb = /^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$/i;
-        const regExpForMail = /^([a-z0-9_\.-]{1,16})@([a-z0-9_\.-]+)\.([a-zрф\.]{2,6})$/iu;
-        const regExpForAppeal = /^[a-zа-я'0-9_-]+$/iu;
+    <script src="decorations.js"></script>
 
-        let arrInput = [document.querySelector('.name'), document.querySelector('.numb'), document.querySelector('.mail'), document.querySelector('.appeal')];
-        let arrRegExp = [regExpForName, regExpForNumb, regExpForMail, regExpForAppeal];
-
-
-
-
-        form.addEventListener('click', (event) => {
-            event.preventDefault();
-
-
-            if (event.composedPath().find(elem => elem.className === 'send')) {
-
-                for (let i = 0; i < arrInput.length; i++) {
-                    if (!arrRegExp[i].test(arrInput[i].value)) {
-                        arrInput[i].classList.add('incorrect');
-                    } else arrInput[i].classList.remove('incorrect');
-                }
-            }
-        });
-    </script>
 </body>
 
 </html>

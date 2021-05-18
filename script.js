@@ -7,32 +7,41 @@ class ProductsList {
         this.products = [];
         this._getProducts()
             .then(data => {
-                this.products = data;
+                this.products.push(...data);
                 // this.applyDiscount(['Ноутбук', 'Мышка'], 10);
-                this.render();
-                this.addItemToCart();
+                this.render(data);
                 // console.log(this.sumOfProducts());
             });
+        this.addClickHandler();
     }
 
     _getProducts() {
         return fetch(`${API}/catalogData.json`)
-            .then(result => result.json()
-                .catch(error => {
-                    console.log(error);
-                    return data === undefined;
-                })
-            )
+            .then(result => result.json()).catch(error => {
+                console.log(error);
+                return [];
+            })
     }
 
-    render() {
+    render(products) {
         let productsList = document.querySelector('.products-list');
 
-        this.products.forEach(product => {
-            const productItem = new ProductItem(product);
-            productsList.insertAdjacentHTML('beforeend', productItem.render());
+        products.forEach(product => {
+            productsList.insertAdjacentHTML('beforeend', this.renderProductItem(product));
         });
+    }
 
+    renderProductItem(product) {
+        let { id_product, product_name, price, img = "img/product-1.png" } = product;
+
+        return `<figure class="products-item">
+                    <img src="${img}" alt="Фото товара">
+                    <figcaption class="item-info">
+                        <h3>${product_name}</h3>
+                        <span class="red">${price} &#8381</span>
+                        <button class="product-buy" type="button" data-id='${id_product}'>Купить</button>
+                    </figcaption>
+                </figure>`
     }
 
     sumOfProducts() {
@@ -46,190 +55,57 @@ class ProductsList {
 
     applyDiscount(arrayTitle, discnt) {
         arrayTitle.forEach(title => {
-
             let findProduct = this.products.find(product => product.product_name === title);
 
             findProduct.price = findProduct.price - (findProduct.price * (discnt / 100));
         });
     }
 
-    addItemToCart() {
+    addClickHandler() {
         const productsCont = document.querySelector('.products-list');
 
         productsCont.addEventListener('click', (event) => {
-            let btn = event.path[0];
+            const target = event.target;
 
-            if (btn.classList[0] === 'product-buy') {
-
-                let foundItem = this.products.find(product => product.id_product === +btn.dataset.id);
-                let cartItemList = document.querySelectorAll('.cart-item');
-                let cartFoundItem = cartList.products.find(cartItem => cartItem.id_product === +btn.dataset.id);
-
-                if (cartItemList.length !== 0 && cartFoundItem) {
-
-                    cartItemList.forEach(cartItem => {
-                        if (cartItem.dataset.id === btn.dataset.id) {
-
-                            let productFinde = cartList.products.find(product => product.id_product === +btn.dataset.id);
-                            let input = cartItem.querySelector('.number-of-goods');
-
-                            productFinde.quantity += 1;
-                            input.value = productFinde.quantity;
-                        }
-                    })
-                } else {
-
-                    for (let cartItem of cartItemList) {
-                        cartItem.remove();
-                    }
-
-                    if (!foundItem.quantity) {
-                        foundItem.quantity = 1;
-                    }
-
-                    cartList.products.push(foundItem);
-                    cartList.render();
-                }
+            if (target.classList.contains('product-buy')) {
+                const id = +target.dataset.id;
+                let product = this.products.find(product => product.id_product === id);
+                cartList.addProductFromList(product);
             }
         })
     }
 }
-class ProductItem {
-    constructor(product) {
-        this.id = product.id_product;
-        this.title = product.product_name;
-        this.price = product.price;
-        this.img = product.img;
-    }
-    render() {
-        let { id, title, price, img = "img/product-1.png" } = this;
-
-        return `<figure class="products-item">
-    <img src="${img}" alt="Фото товара">
-    <figcaption class="item-info">
-    <h3>${title}</h3>
-    <span class="red">${price} &#8381</span>
-    <button class="product-buy" type="button" data-id='${id}'>Купить</button>
-    </figcaption></figure>`
-    }
-}
 
 const list = new ProductsList();
-list.render();
 
 class CartList {
     constructor() {
         this.products = [];
         this._getProducts()
             .then(data => {
-                this.products = data.contents;
-                this.render();
-                this.addProduct();
+                this.products.push(...data.contents);
+                this.render(data.contents);
+                this.addProductHandlers();
             });
     }
     _getProducts() {
         return fetch(`${API}/getBasket.json`)
-            .then(result => result.json()
-                .catch(error => {
-                    console.log(error);
-                    return data === undefined;
-                })
-            )
+            .then(result => result.json()).catch(error => {
+                console.log(error);
+                return {
+                    contents: []
+                };
+            })
     }
 
-    render() {
-
-        let cartCont = document.querySelector('.cart-content');
-
-        this.products.forEach(product => {
-            const cartItem = new CartItem(product);
-            cartCont.insertAdjacentHTML('beforeend', cartItem.render());
-        });
-
-        this.showMessage(cartCont);
-
+    render(products) {
+        products.forEach(this.renderItem);
+        this.checkEmptyMessage();
     }
 
-    showMessage(cartList) {
-        let cartText = document.querySelector('.no-product-in-cart');
-
-        if (document.querySelector('.cart-item') && cartText) {
-
-            cartList.removeChild(cartText);
-
-        } else if (!document.querySelector('.cart-item') && !cartText) {
-            cartList.insertAdjacentHTML('beforeend', '<span class="no-product-in-cart">У Вас пока что нет товаров в корзине</span>');
-        }
-    }
-
-    addProduct() {
-
-
-        let cartList = document.querySelector('.cart-content');
-
-        cartList.addEventListener('click', (event) => {
-
-            let btn = event.path[0];
-            let input = btn.parentNode.querySelector('.number-of-goods');
-
-            if (btn.classList[1] === "remove-product") {
-
-                this.removeProducts(btn.dataset.id, input);
-                this.showMessage(cartList);
-
-            } else if (btn.classList[1] === "add-product") {
-
-                this.addProducts(btn.dataset.id, input);
-            }
-        })
-    }
-
-    removeProducts(idBtn, input) {
-
-        let figureList = document.querySelectorAll('.cart-item');
-        let productFinde = this.products.find(product => product.id_product === +idBtn);
-
-        if (productFinde.quantity !== 1) {
-
-            productFinde.quantity -= 1;
-
-            input.value = productFinde.quantity;
-
-        } else {
-
-            this.products.splice(this.products.indexOf(productFinde), 1);
-
-
-            for (let figure of figureList) {
-                if (figure.dataset.id === idBtn) {
-                    figure.remove();
-                }
-            }
-        }
-    }
-
-    addProducts(idBtn, input) {
-
-        let productFinde = this.products.find(product => product.id_product === +idBtn);
-
-        productFinde.quantity += 1;
-
-        input.value = productFinde.quantity;
-
-    }
-}
-
-class CartItem {
-    constructor(product) {
-        this.id_product = product.id_product;
-        this.product_name = product.product_name;
-        this.price = product.price;
-        this.img = product.img;
-        this.quantity = product.quantity;
-    }
-    render() {
-        let { id_product, product_name, price, img = "img/product-1.png", quantity } = this;
-        return `<figure class="cart-item" data-id="${id_product}">
+    renderItem(item) {
+        let { id_product, product_name, price, img = "img/product-1.png", quantity } = item;
+        document.querySelector('.cart-content').insertAdjacentHTML('beforeend', `<figure class="cart-item" data-id="${id_product}">
         <img src="${img}" alt="Фото товара">
         <figcaption class="cart-item-info">
             <div class="wrapper-for-info">
@@ -242,15 +118,61 @@ class CartItem {
                 <button class="count-buttons__button add-product" data-id="${id_product}"></button>
             </div>
         </figcaption>
-    </figure>`
+    </figure>`)
+    }
+
+    checkEmptyMessage() {
+        let cartText = document.querySelector('.no-product-in-cart');
+
+        cartText.hidden = !!this.products.length;
+    }
+
+    addProductHandlers() {
+
+
+        let cartList = document.querySelector('.cart-content');
+
+        cartList.addEventListener('click', (event) => {
+            const target = event.target;
+            if (target.classList.contains('remove-product')) {
+                this.removeProduct(+target.dataset.id);
+            } else if (target.classList.contains('add-product')) {
+                this.addProduct(+target.dataset.id);
+            }
+        })
+    }
+
+    removeProduct(id) {
+        let elem = document.querySelector(`.cart-item[data-id="${id}"]`);
+        let input = elem.querySelector('input.number-of-goods')
+        let product = this.products.find(p => p.id_product == id);
+        if (product.quantity > 1) {
+            input.value = product.quantity -= 1
+        } else {
+            this.products.splice(this.products.indexOf(product), 1);
+            elem.remove();
+            this.checkEmptyMessage();
+        }
+    }
+
+    addProduct(id) {
+        let input = document.querySelector(`.cart-item[data-id="${id}"] input.number-of-goods`);
+        let productFinde = this.products.find(product => product.id_product == id);
+
+        input.value = productFinde.quantity += 1;
+    }
+
+    addProductFromList(product) {
+        let productInCart = this.products.find(p => p.id_product === product.id_product);
+        if (!productInCart) {
+            productInCart = {...product, quantity: 1 };
+            this.products.push(productInCart);
+            this.renderItem(productInCart);
+            this.checkEmptyMessage();
+        } else {
+            this.addProduct(productInCart.id_product);
+        }
     }
 }
 
 const cartList = new CartList();
-cartList.render();
-
-// запуск лоадера
-
-window.addEventListener('load', function() {
-    loader();
-})
