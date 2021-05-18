@@ -52,8 +52,16 @@ if (form) {
             for (let i = 0; i < arrInput.length; i++) {
                 if (!arrRegExp[i].test(arrInput[i].value)) {
                     arrInput[i].classList.add('incorrect');
+                    if (!(arrInput[i].nextElementSibling.className === 'notification')) {
+                        arrInput[i].insertAdjacentHTML('afterend', '<span class="notification">Это поле обязательно для ввода!</span>');
+                    }
                     event.preventDefault();
-                } else arrInput[i].classList.remove('incorrect');
+                } else {
+                    arrInput[i].classList.remove('incorrect')
+                    if (arrInput[i].nextElementSibling.className === 'notification') {
+                        arrInput[i].nextElementSibling.remove();
+                    }
+                };
             }
         }
     })

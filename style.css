@@ -238,7 +238,7 @@ button {
     margin: 30px 0px;
 }
 
-.feedback>span {
+.field-name {
     font-size: 22px;
     font-weight: 600;
 }
@@ -273,4 +273,10 @@ button {
 
 .incorrect {
     border: 2px solid #ee223d;
+}
+
+.notification {
+    font-size: 16px;
+    margin-bottom: 5px;
+    color: #ee223d;
 }
