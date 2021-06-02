@@ -1,7 +1,7 @@
 'use strict'
 
 const API = "https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses";
-
+const productsCont = document.querySelector('.products-list');
 class ProductsList {
     constructor() {
         this.products = [];
@@ -24,10 +24,9 @@ class ProductsList {
     }
 
     render(products) {
-        let productsList = document.querySelector('.products-list');
-
+        productsCont.textContent = '';
         products.forEach(product => {
-            productsList.insertAdjacentHTML('beforeend', this.renderProductItem(product));
+            productsCont.insertAdjacentHTML('beforeend', this.renderProductItem(product));
         });
     }
 
@@ -62,7 +61,7 @@ class ProductsList {
     }
 
     addClickHandler() {
-        const productsCont = document.querySelector('.products-list');
+
 
         productsCont.addEventListener('click', (event) => {
             const target = event.target;
@@ -73,6 +72,19 @@ class ProductsList {
                 cartList.addProductFromList(product);
             }
         })
+    }
+
+    searchProducts(searchQuery) {
+        this.products = [];
+        let regExp = new RegExp(searchQuery, 'i');
+        this._getProducts().then(data => {
+            data.forEach(item => {
+                if (regExp.test(item.product_name)) {
+                    this.products.push(item);
+                }
+            })
+            this.render(this.products);
+        });
     }
 }
 
@@ -176,3 +188,10 @@ class CartList {
 }
 
 const cartList = new CartList();
+
+const search = document.querySelector('.search');
+search.addEventListener('submit', (ev) => {
+    ev.preventDefault();
+    console.log(ev.target.querySelector('.search-text').value)
+    list.searchProducts(ev.target.querySelector('.search-text').value);
+})
