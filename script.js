@@ -76,10 +76,10 @@ class ProductsList {
 
     searchProducts(searchQuery) {
         this.products = [];
-        let regExp = new RegExp(searchQuery, 'i');
+        searchQuery = searchQuery.toLowerCase()
         this._getProducts().then(data => {
             data.forEach(item => {
-                if (regExp.test(item.product_name)) {
+                if (item.product_name.toLowerCase().includes(searchQuery)) {
                     this.products.push(item);
                 }
             })
