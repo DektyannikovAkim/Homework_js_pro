@@ -258,14 +258,33 @@ button {
     margin: 30px 0px;
 }
 
+.wrapper-for-input>label {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
 .field-name {
     font-size: 22px;
     font-weight: 600;
 }
 
-.feedback>input {
+.wrapper-for-input>label>input {
     margin: 5px 0px 10px 0px;
     padding: 5px;
+}
+
+.error-msg {
+    color: #fa0606;
+    margin: 10px 0;
+}
+
+.invalid {
+    border: 2px solid #fa0606;
+}
+
+.valid {
+    border: 2px solid #31cc02;
 }
 
 .appeal {

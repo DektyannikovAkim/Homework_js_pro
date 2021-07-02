@@ -28,15 +28,35 @@
               </path>
             </svg>
         </div>
-        <form class="feedback">
-            <span class="field-name">Имя:</span>
-            <input class="name" type="text">
-            <span class="field-name">Номер телефона:</span>
-            <input class="numb" type="text">
-            <span class="field-name">E-mail:</span>
-            <input class="mail" type="text">
-            <span class="field-name">Текст обращения:</span>
-            <textarea class="appeal" name="" id="" cols="30" rows="10"></textarea>
+        <form class="feedback" id="feedback-form">
+            <div class="wrapper-for-input">
+                <label>
+                    <span class="field-name">Имя:</span>
+                    <input class="name" type="text" id="name" name="name">
+                </label>
+            </div>
+
+            <div class="wrapper-for-input">
+                <label>
+                    <span class="field-name">Номер телефона:</span>
+                <input class="numb" type="tel" id="phone" name="phone">
+                </label>
+            </div>
+
+            <div class="wrapper-for-input">
+                <label>
+                    <span class="field-name">E-mail:</span>
+                <input class="mail" type="email" id="email" name="email">
+                </label>
+            </div>
+
+            <div class="wrapper-for-input">
+                <label>
+                    <span class="field-name">Текст обращения:</span>
+                    <textarea class="appeal" id="appeal" name="appeal" cols="30" rows="10"></textarea>
+                </label>
+            </div>
+
             <button class="send" type="submit">Send</button>
         </form>
     </main>
@@ -46,7 +66,7 @@
     </footer>
 
     <script src="decorations.js"></script>
-
+    <script src="validator.js"></script>
 </body>
 
 </html>
